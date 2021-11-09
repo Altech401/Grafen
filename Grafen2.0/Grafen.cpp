@@ -565,7 +565,7 @@ int main()
     fzmax = 50;
 
 
-    GrafXYZ.open("GrafXYZ");
+    GrafXYZ.open("GrafXYZ.xyz");
 
     GrafXYZ << 2 * k + k4 << endl;
     GrafXYZ << "#XYZ format" << endl; // запись результатов в файл в формате XYZ
