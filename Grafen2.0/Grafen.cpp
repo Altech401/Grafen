@@ -565,14 +565,15 @@ int main()
     fzmax = 50;
 
 
-    GrafXYZ.open("GrafXYZ.txt");
+    GrafXYZ.open("GrafXYZ");
 
     GrafXYZ << 2 * k + k4 << endl;
     GrafXYZ << "#XYZ format" << endl; // запись результатов в файл в формате XYZ
 
     for (int i = 0; i < k; i++)
     {
-        GrafXYZ << PL1T[i] << "     ";
+        //GrafXYZ << PL1T[i] << "     ";
+        GrafXYZ << "C" << "     ";
         for (int j = 1; j < 4; j++)
         {
             GrafXYZ << PL1[i][j] << "     ";
@@ -582,7 +583,8 @@ int main()
 
     for (int i = 0; i < k; i++)
     {
-        GrafXYZ << PL3T[i] << "     ";
+        //GrafXYZ << PL3T[i] << "     ";
+        GrafXYZ << "C" << "     ";
         for (int j = 1; j < 4; j++)
         {
             GrafXYZ << PL3[i][j] << "     ";
@@ -595,7 +597,8 @@ int main()
 
         if (PL4[i][3] != -909909)
         {
-            GrafXYZ << PL4T[i] << "     ";
+            //GrafXYZ << PL4T[i] << "     ";
+            GrafXYZ << "H" << "     ";
         }
         for (int j = 1; j < 4; j++)
         {
@@ -617,7 +620,7 @@ int main()
     GrafXYZ.close();
 
 
-    GrafLMP.open("GrafLMP.txt"); // запись результатов в файл в формате LAMMPS
+    GrafLMP.open("GrafLMP"); // запись результатов в файл в формате LAMMPS
     GrafLMP << "#Lammps format" << endl;
     GrafLMP << 2 * k + k4 << " atoms" << endl;
     GrafLMP << endl;
