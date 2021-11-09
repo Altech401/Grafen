@@ -13,15 +13,15 @@ int main()
 {
     ofstream GrafLMP, GrafXYZ;
     const double PI = 3.14159265;
-    double ALPHA, DELTA, dx, dy, R, r, xmax, ymax, fxmax, fxmin, fymax, fymin, fzmax, fzmin, xx,n;
-    int k = 1, k1, l, T, k2, J, k3, k4 = 0,m=0,yy,b;
-    bool Fl1 = true, Fl2,PF=false;
+    double ALPHA, DELTA, dx, dy, R, r, xmax, ymax, fxmax, fxmin, fymax, fymin, fzmax, fzmin, xx,n,yymax,xxmax,Tx,Ty;
+    int k = 1, k1, l, T, k2, J, k3, k4 = 0, m = 0, yy, b, IJ[10000][2], kp, jj,PL1T[10000], PL3T[10000],PL4T[20000];
+    bool Fl1 = true, Fl2, PF = false, Fl3,Fl4;
     char c;
     char* locale = setlocale(LC_ALL, "");
     double N, N2;
     cout << "Введите размер пластины" << endl;
     cin >> N;
-    float PL1[10000][5], PL2[10000][5], PL3[10000][5], PL4[20000][5];
+    float PL1[10000][4], PL3[10000][4], PL4[20000][4];
     bool PL11[10000], PL33[10000];
 
     PL1[0][1] = 0.0;
@@ -33,6 +33,7 @@ int main()
     //Создание первой пластины графена
     xmax = PL1[0][1];
     ymax = PL1[0][2];
+    T = 2 * N;
     while (PL1[k][2] < N)
     {
         for (int i = k - 1; PL1[i][1] < N; i++)
@@ -74,11 +75,17 @@ int main()
             if (xmax < PL1[i + 1][1])
             {
                 xmax = PL1[i + 1][1];
+                xxmax = xmax;
             }
-            if (PL1[i][2]==0)
+            if (PL1[i + 1][1] - N > 2.13)
             {
-                m = k;
+                k = k - 1;
+                break;
             }
+        }
+        if (PL1[k-1][2] == 0)
+        {
+            m = k;
         }
         T = k - l;
         Fl1 = true;
@@ -87,6 +94,7 @@ int main()
         if (PL1[k][2] > ymax)
         {
             ymax = PL1[k][2];
+            yymax = ymax;
         }
 
         if (PL1[k][2] > N)
@@ -120,90 +128,30 @@ int main()
     for (int i = 0; i < k; i++)
     {
         PL1[i][3] = 0;
-        PL1[i][4] = 1;
+        PL1T[i] = 1;
     }
 
     k1 = k;
     cout << endl;
 
     //Создание второй пластины графена
-    l = 0;
-    k = 1;
-    PL2[0][1] = 0.0;
-    PL2[0][2] = 0.0;
-    PL2[0][3] = 0.0;
-    PL2[1][3] = 0.0;
-    Fl1 = true;
-
-    while (PL2[k][2] < N)
-    {
-        for (int i = k - 1; PL2[i][1] < N; i++)
-        {
-
-            if (Fl1 == true)
-            {
-
-                if (PL2[i][1] == 0)
-                {
-                    k = k + 1;
-                    PL2[i + 1][1] = PL2[i][1] + 2 * 1.42;
-                    Fl1 = false;
-                }
-                else
-                {
-                    k = k + 1;
-                    PL2[i + 1][1] = PL2[i][1] + 1.42;
-                    Fl1 = false;
-                }
-            }
-
-            else
-            {
-                if (PL2[i][1] - PL2[i - 1][1] > 1.43)
-                {
-                    PL2[i + 1][1] = PL2[i][1] + 1.42;
-                    k = k + 1;
-
-                }
-                else
-                {
-                    PL2[i + 1][1] = PL2[i][1] + 2 * 1.42;
-                    k = k + 1;
-
-                }
-            }
-            T = k - l;
-            PL2[i + 1][2] = PL1[i][2];
-        }
-
-        Fl1 = true;
-        PL2[k][2] = PL2[k - 1][2] + sqrt(3) * 1.42 * 0.5;
-        if (PL2[k][2] > N)
-        {
-            break;
-        }
-        if (PL2[k - T][1] == 0)
-        {
-            PL2[k][1] = 1.42 * 0.5;
-        }
-        else
-        {
-            PL2[k][1] = 0;
-        }
-        l = k;
-        k = k + 1;
-    }
-
-
+    
 
     for (int i = 0; i < k; i++)
     {
-        PL2[i][0] = k1 + 1 + i;
+        PL3[i][1] = PL1[i][1];
+        PL3[i][2] = PL1[i][2];
+
     }
 
     for (int i = 0; i < k; i++)
     {
-        PL2[i][3] = 3.33;
+        PL3[i][0] = k1 + 1 + i;
+    }
+
+    for (int i = 0; i < k; i++)
+    {
+        PL3[i][3] = 3.33;
     }
 
 
@@ -316,8 +264,8 @@ int main()
     {
         PL1[i][1] = PL1[i][1] - xmax;
         PL1[i][2] = PL1[i][2] - ymax;
-        PL2[i][1] = PL2[i][1] - xmax;
-        PL2[i][2] = PL2[i][2] - ymax;
+        PL3[i][1] = PL3[i][1] - xmax;
+        PL3[i][2] = PL3[i][2] - ymax;
     }
     
 
@@ -332,11 +280,13 @@ int main()
     fymax = PL1[0][2];
     for (int i = 0; i < k; i++)
     {
+        Tx = PL3[i][1];
+        Ty = PL3[i][2];
         PL3[i][0] = k1 + i + 1;
-        PL3[i][1] = PL2[i][1] * cos(ALPHA * PI / 180) - PL2[i][2] * sin(ALPHA * PI / 180);
-        PL3[i][2] = PL2[i][1] * sin(ALPHA * PI / 180) + PL2[i][2] * cos(ALPHA * PI / 180);
-        PL3[i][3] = PL2[i][3];
-        PL3[i][4] = 1;
+        PL3[i][1] = Tx * cos(ALPHA * PI / 180) - Ty * sin(ALPHA * PI / 180);
+        PL3[i][2] = Tx * sin(ALPHA * PI / 180) + Ty * cos(ALPHA * PI / 180);
+       // PL3[i][3] = PL3[i][3];
+        PL3T[i] = 1;
         k3 = PL3[i][0];
         if (PL3[i][1] > fxmax)
         {
@@ -376,6 +326,7 @@ int main()
     J = 0;
     cout << "Задайте погрешность" << endl;
     cin >> DELTA;
+    kp = 0;
     for (int i = 0; i < k1; i++)
     {
         for (int j = 0; j < k1; j++)
@@ -385,7 +336,29 @@ int main()
             R = sqrt(pow(dx, 2) + pow(dy, 2));
             if (R <= DELTA)
             {
+                IJ[kp][0] = i;
+                IJ[kp][1] = j;
+                kp = kp + 1;
+                PL11[j] = true;
+                PL33[i] = true;
+                break;
 
+            }
+        }
+    }
+    /*
+    for (int i = 0; i < k1; i++)
+    {
+        for (int j = 0; j < k1; j++)
+        {
+            dx = abs(PL3[i][1] - PL1[j][1]);
+            dy = abs(PL3[i][2] - PL1[j][2]);
+            R = sqrt(pow(dx, 2) + pow(dy, 2));
+            if (R <= DELTA)
+            {
+                IJ[kp][0] = i;
+                IJ[kp][1] = j;
+                kp = kp + 1;
                 PL11[j] = true;
                 PL33[i] = true;
                 break;
@@ -394,9 +367,156 @@ int main()
         }
     }
 
+    */
+    
+    Fl3 = false;
+    Fl4 = false;
+    for (int i = 0; i < k1; i++)
+    { 
+        if (PL11[i] == true)
+        {
+            if ((PL1[i][1] != PL1[0][1]) and (PL1[i][1] != PL1[T - 1][1]) and (PL1[i][1] != PL1[T][1]) and (PL1[i][1] != PL1[2*T-1][1]))
+            {
+                if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                {
+                    PL11[i + T] = false;
+                    PL11[i - T] = false;
+                }
+                else
+                {
+                    if (PL1[i][2] == PL1[0][2])
+                    {
+                        PL11[i + T] = false;
+                    }
+                    if (PL1[i][2] == PL1[k1][2])
+                    {
+                        PL11[i - T] = false;
+                    }
+                }
+                if (PL1[i + 1][1] - PL1[i][1] < 1.44)
+                {
+                    PL11[i + 1] = false;
+                }
+                else
+                {
+                    PL11[i - 1] = false;
+                }
+            }
+            else 
+            {
+                /*
+                if (PL1[i][1] == PL1[0][1])
+                {
+                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                    {
+                        PL11[i + T] = false;
+                        PL11[i - T] = false;
+                    }
+                    else
+                    {
+                        if (PL1[i][2] == PL1[0][2])
+                        {
+                            PL11[i + T] = false;
+                        }
+                        if (PL1[i][2] == PL1[k1][2])
+                        {
+                            PL11[i - T] = false;
+                        }
+                    }
+                }
+                */
+                if(PL1[i][1] == PL1[T - 1][1])
+                {
+                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                    {
+                        PL11[i + T] = false;
+                        PL11[i - T] = false;
+                    }
+                    else
+                    {
+                        if (PL1[i][2] == PL1[0][2])
+                        {
+                            PL11[i + T] = false;
+                        }
+                        if (PL1[i][2] == PL1[k1][2])
+                        {
+                            PL11[i - T] = false;
+                        }
+                    }
 
+                    if (PL1[i][1] - PL1[i-1][1] < 1.44)
+                    {
+                        PL11[i - 1] = false;
+                    }
+                }
+                if (PL1[i][1] == PL1[T][1])
+                {
+                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                    {
+                        PL11[i + T] = false;
+                        PL11[i - T] = false;
+                    }
+                    else
+                    {
+                        if (PL1[i][2] == PL1[0][2])
+                        {
+                            PL11[i + T] = false;
+                        }
+                        if (PL1[i][2] == PL1[k1][2])
+                        {
+                            PL11[i - T] = false;
+                        }
+                    }
+                    PL11[i + 1] = false;
+                }
+                if (PL1[i][1] == PL1[2 * T - 1][1])
+                {
+                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                    {
+                        PL11[i + T] = false;
+                        PL11[i - T] = false;
+                    }
+                    else
+                    {
+                        if (PL1[i][2] == PL1[0][2])
+                        {
+                            PL11[i + T] = false;
+                        }
+                        if (PL1[i][2] == PL1[k1][2])
+                        {
+                            PL11[i - T] = false;
+                        }
+                    }
+                    
+                    if (PL1[i][1] - PL1[i - 1][1] < 1.44)
+                    {
+                        PL11[i - 1] = false;
+                    }
 
+                }
 
+            }
+
+        }
+        
+    }
+    
+    jj = 0;
+    for (int i = 0; i < k1; i++)
+    {
+        for (int j =0 ; j < kp; j++)
+        {
+            if (i == IJ[j][1])
+            {
+                if (PL11[i] == false)
+                {
+                    PL33[IJ[j][0]] = false;
+                }
+                //jj = jj + 1;
+            }
+        }
+    }
+    
     for (int i = 0; i < k1; i++)
     {
         if (PL11[i] == false)
@@ -405,7 +525,7 @@ int main()
             PL4[i][2] = PL1[i][2];
             PL4[i][3] = PL1[i][3] - r;
             PL4[i][0] = k3 + J + 1;
-            PL4[i][4] = 2;
+            PL4T[i] = 2;
             J = J + 1;
             k4 = k4 + 1;
         }
@@ -427,7 +547,7 @@ int main()
             PL4[i][2] = PL3[i - k1][2];
             PL4[i][3] = PL3[i - k1][3] + r;
             PL4[i][0] = k3 + J + 1;
-            PL4[i][4] = 2;
+            PL4T[i] = 2;
             J = J + 1;
             k4 = k4 + 1;
         }
@@ -452,7 +572,7 @@ int main()
 
     for (int i = 0; i < k; i++)
     {
-        GrafXYZ << PL1[i][4] << "     ";
+        GrafXYZ << PL1T[i] << "     ";
         for (int j = 1; j < 4; j++)
         {
             GrafXYZ << PL1[i][j] << "     ";
@@ -462,7 +582,7 @@ int main()
 
     for (int i = 0; i < k; i++)
     {
-        GrafXYZ << PL3[i][4] << "     ";
+        GrafXYZ << PL3T[i] << "     ";
         for (int j = 1; j < 4; j++)
         {
             GrafXYZ << PL3[i][j] << "     ";
@@ -475,7 +595,7 @@ int main()
 
         if (PL4[i][3] != -909909)
         {
-            GrafXYZ << PL4[i][4] << "     ";
+            GrafXYZ << PL4T[i] << "     ";
         }
         for (int j = 1; j < 4; j++)
         {
@@ -512,7 +632,7 @@ int main()
     for (int i = 0; i < k; i++)
     {
         GrafLMP << PL1[i][0] << " ";
-        GrafLMP << PL1[i][4] << " ";
+        GrafLMP << PL1T[i] << " ";
 
         for (int j = 1; j < 4; j++)
         {
@@ -524,7 +644,7 @@ int main()
     for (int i = 0; i < k; i++)
     {
         GrafLMP << PL3[i][0] << " ";
-        GrafLMP << PL3[i][4] << " ";
+        GrafLMP << PL3T[i] << " ";
         for (int j = 1; j < 4; j++)
         {
             GrafLMP << PL3[i][j] << " ";
@@ -537,7 +657,7 @@ int main()
         if (PL4[i][3] != -909909)
         {
             GrafLMP << PL4[i][0] << " ";
-            GrafLMP << PL4[i][4] << " ";
+            GrafLMP << PL4T[i] << " ";
         }
 
         for (int j = 1; j < 4; j++)
