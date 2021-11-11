@@ -13,7 +13,7 @@ int main()
 {
     ofstream GrafLMP, GrafXYZ;
     const double PI = 3.14159265;
-    double ALPHA, DELTA, dx, dy, R, r, xmax, ymax, fxmax, fxmin, fymax, fymin, fzmax, fzmin, xx,n,yymax,xxmax,Tx,Ty;
+    double ALPHA, DELTA, dx, dy, R, r, xmax, ymax, fxmax, fxmin, fymax, fymin, fzmax, fzmin, xx,n,yymax,xxmax,Tx,Ty,o;
     int k = 1, k1, l, T, k2, J, k3, k4 = 0, m = 0, yy, b, IJ[10000][2], kp, jj,PL1T[10000], PL3T[10000],PL4T[20000];
     bool Fl1 = true, Fl2, PF = false, Fl3,Fl4;
     char c;
@@ -346,161 +346,152 @@ int main()
             }
         }
     }
-    /*
-    for (int i = 0; i < k1; i++)
+  
+    o = 0;
+    while (o<(N*sqrt(2)+2))
     {
-        for (int j = 0; j < k1; j++)
+        for (int i = 0; i < k1; i++)
         {
-            dx = abs(PL3[i][1] - PL1[j][1]);
-            dy = abs(PL3[i][2] - PL1[j][2]);
-            R = sqrt(pow(dx, 2) + pow(dy, 2));
-            if (R <= DELTA)
+            dx = pow(PL1[i][1], 2);
+            dy = pow(PL1[i][2], 2);
+            R= sqrt(dx + dy);
+            if((R>=o)and(R<o+0.5))
             {
-                IJ[kp][0] = i;
-                IJ[kp][1] = j;
-                kp = kp + 1;
-                PL11[j] = true;
-                PL33[i] = true;
-                break;
+                if (PL11[i] == true)
+                {
+                    if ((PL1[i][1] != PL1[0][1]) and (PL1[i][1] != PL1[T - 1][1]) and (PL1[i][1] != PL1[T][1]) and (PL1[i][1] != PL1[2 * T - 1][1]))
+                    {
+                        if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                        {
+                            PL11[i + T] = false;
+                            PL11[i - T] = false;
+                        }
+                        else
+                        {
+                            if (PL1[i][2] == PL1[0][2])
+                            {
+                                PL11[i + T] = false;
+                            }
+                            if (PL1[i][2] == PL1[k1][2])
+                            {
+                                PL11[i - T] = false;
+                            }
+                        }
+                        if (PL1[i + 1][1] - PL1[i][1] < 1.44)
+                        {
+                            PL11[i + 1] = false;
+                        }
+                        else
+                        {
+                            PL11[i - 1] = false;
+                        }
+                    }
+                    else
+                    {
+                        /*
+                        if (PL1[i][1] == PL1[0][1])
+                        {
+                            if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                            {
+                                PL11[i + T] = false;
+                                PL11[i - T] = false;
+                            }
+                            else
+                            {
+                                if (PL1[i][2] == PL1[0][2])
+                                {
+                                    PL11[i + T] = false;
+                                }
+                                if (PL1[i][2] == PL1[k1][2])
+                                {
+                                    PL11[i - T] = false;
+                                }
+                            }
+                        }
+                        */
+                        if (PL1[i][1] == PL1[T - 1][1])
+                        {
+                            if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                            {
+                                PL11[i + T] = false;
+                                PL11[i - T] = false;
+                            }
+                            else
+                            {
+                                if (PL1[i][2] == PL1[0][2])
+                                {
+                                    PL11[i + T] = false;
+                                }
+                                if (PL1[i][2] == PL1[k1][2])
+                                {
+                                    PL11[i - T] = false;
+                                }
+                            }
 
+                            if (PL1[i][1] - PL1[i - 1][1] < 1.44)
+                            {
+                                PL11[i - 1] = false;
+                            }
+                        }
+                        if (PL1[i][1] == PL1[T][1])
+                        {
+                            if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                            {
+                                PL11[i + T] = false;
+                                PL11[i - T] = false;
+                            }
+                            else
+                            {
+                                if (PL1[i][2] == PL1[0][2])
+                                {
+                                    PL11[i + T] = false;
+                                }
+                                if (PL1[i][2] == PL1[k1][2])
+                                {
+                                    PL11[i - T] = false;
+                                }
+                            }
+                            PL11[i + 1] = false;
+                        }
+                        if (PL1[i][1] == PL1[2 * T - 1][1])
+                        {
+                            if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
+                            {
+                                PL11[i + T] = false;
+                                PL11[i - T] = false;
+                            }
+                            else
+                            {
+                                if (PL1[i][2] == PL1[0][2])
+                                {
+                                    PL11[i + T] = false;
+                                }
+                                if (PL1[i][2] == PL1[k1][2])
+                                {
+                                    PL11[i - T] = false;
+                                }
+                            }
+
+                            if (PL1[i][1] - PL1[i - 1][1] < 1.44)
+                            {
+                                PL11[i - 1] = false;
+                            }
+
+                        }
+
+                    }
+
+                }
             }
+            
+        }
+        o = o + 0.5;
+        if (o > (N * sqrt(2) + 2))
+        {
+            break;
         }
     }
-
-    */
-    
-    Fl3 = false;
-    Fl4 = false;
-    for (int i = 0; i < k1; i++)
-    { 
-        if (PL11[i] == true)
-        {
-            if ((PL1[i][1] != PL1[0][1]) and (PL1[i][1] != PL1[T - 1][1]) and (PL1[i][1] != PL1[T][1]) and (PL1[i][1] != PL1[2*T-1][1]))
-            {
-                if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
-                {
-                    PL11[i + T] = false;
-                    PL11[i - T] = false;
-                }
-                else
-                {
-                    if (PL1[i][2] == PL1[0][2])
-                    {
-                        PL11[i + T] = false;
-                    }
-                    if (PL1[i][2] == PL1[k1][2])
-                    {
-                        PL11[i - T] = false;
-                    }
-                }
-                if (PL1[i + 1][1] - PL1[i][1] < 1.44)
-                {
-                    PL11[i + 1] = false;
-                }
-                else
-                {
-                    PL11[i - 1] = false;
-                }
-            }
-            else 
-            {
-                /*
-                if (PL1[i][1] == PL1[0][1])
-                {
-                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
-                    {
-                        PL11[i + T] = false;
-                        PL11[i - T] = false;
-                    }
-                    else
-                    {
-                        if (PL1[i][2] == PL1[0][2])
-                        {
-                            PL11[i + T] = false;
-                        }
-                        if (PL1[i][2] == PL1[k1][2])
-                        {
-                            PL11[i - T] = false;
-                        }
-                    }
-                }
-                */
-                if(PL1[i][1] == PL1[T - 1][1])
-                {
-                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
-                    {
-                        PL11[i + T] = false;
-                        PL11[i - T] = false;
-                    }
-                    else
-                    {
-                        if (PL1[i][2] == PL1[0][2])
-                        {
-                            PL11[i + T] = false;
-                        }
-                        if (PL1[i][2] == PL1[k1][2])
-                        {
-                            PL11[i - T] = false;
-                        }
-                    }
-
-                    if (PL1[i][1] - PL1[i-1][1] < 1.44)
-                    {
-                        PL11[i - 1] = false;
-                    }
-                }
-                if (PL1[i][1] == PL1[T][1])
-                {
-                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
-                    {
-                        PL11[i + T] = false;
-                        PL11[i - T] = false;
-                    }
-                    else
-                    {
-                        if (PL1[i][2] == PL1[0][2])
-                        {
-                            PL11[i + T] = false;
-                        }
-                        if (PL1[i][2] == PL1[k1][2])
-                        {
-                            PL11[i - T] = false;
-                        }
-                    }
-                    PL11[i + 1] = false;
-                }
-                if (PL1[i][1] == PL1[2 * T - 1][1])
-                {
-                    if ((PL1[i][2] != PL1[0][2]) and (PL1[i][2] != PL1[k1][2]))
-                    {
-                        PL11[i + T] = false;
-                        PL11[i - T] = false;
-                    }
-                    else
-                    {
-                        if (PL1[i][2] == PL1[0][2])
-                        {
-                            PL11[i + T] = false;
-                        }
-                        if (PL1[i][2] == PL1[k1][2])
-                        {
-                            PL11[i - T] = false;
-                        }
-                    }
-                    
-                    if (PL1[i][1] - PL1[i - 1][1] < 1.44)
-                    {
-                        PL11[i - 1] = false;
-                    }
-
-                }
-
-            }
-
-        }
-        
-    }
-    
+   
     jj = 0;
     for (int i = 0; i < k1; i++)
     {
@@ -512,7 +503,6 @@ int main()
                 {
                     PL33[IJ[j][0]] = false;
                 }
-                //jj = jj + 1;
             }
         }
     }
