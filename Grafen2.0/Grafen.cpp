@@ -7,22 +7,66 @@
 #include <stdlib.h>
 #include <fstream> 
 
-
+const unsigned int NN = 1000000;
 using namespace std;
 int main()
 {
-    ofstream GrafLMP, GrafXYZ;
+    ofstream GrafLMP, GrafXYZ, GrafOkr;
     const double PI = 3.14159265;
     double ALPHA, DELTA, dx, dy, R, r, xmax, ymax, fxmax, fxmin, fymax, fymin, fzmax, fzmin, xx,n,yymax,xxmax,Tx,Ty,o;
-    int k = 1, k1, l, T, k2, J, k3, k4 = 0, m = 0, yy, b, IJ[10000][2], kp, jj,PL1T[10000], PL3T[10000],PL4T[20000];
+    int k = 1, k1, l, T, k2, J, k3, k4 = 0, m = 0, yy, b, kp, jj;
+
+    int** IJ;
+
+    IJ = new int* [NN];    
+    for (int i = 0; i < NN; i++) {   
+        IJ[i] = new int[2];     
+    }
+    
+    int* PL1T = new int[NN];
+    int* PL3T = new int[NN];
+    int* PL4T = new int[2*NN];
+    
+   
+    
     bool Fl1 = true, Fl2, PF = false, Fl3,Fl4;
-    char c;
+    char c,c0;
     char* locale = setlocale(LC_ALL, "");
-    double N, N2;
+    double N, N2,O;
+
     cout << "Введите размер пластины" << endl;
     cin >> N;
-    float PL1[10000][4], PL3[10000][4], PL4[20000][4];
-    bool PL11[10000], PL33[10000];
+    cout << "Вырезать окружность? (Y/N)" << endl;
+    cin >> c0;
+
+    if ((c0=='Y') or (c0=='y') or (c0=='У') or (c0=='у'))
+    {
+        cout << "Введите радиус окружности" << endl;
+        cin >> O;
+    }
+
+    bool* PL11 = new bool[NN];
+    bool* PL33 = new bool[NN];
+
+    float** PL1;
+    float** PL3;
+    float** PL4;
+
+    PL1 = new float* [NN];
+    for (int i = 0; i < NN; i++) {
+        PL1[i] = new float[4];
+    }
+
+    PL3 = new float* [NN];
+    for (int i = 0; i < NN; i++) {
+        PL3[i] = new float[4];
+    }
+
+    PL4 = new float* [2*NN];
+    for (int i = 0; i < 2*NN; i++) {
+        PL4[i] = new float[4];
+    }
+
 
     PL1[0][1] = 0.0;
     PL1[0][2] = 0.0;
@@ -671,9 +715,175 @@ int main()
 
 
     GrafLMP.close();
+    if ((c0 == 'Y') or (c0 == 'y') or (c0 == 'У') or (c0 == 'у'))
+    {
 
 
+        fxmax = 0;
+        fxmin = 0;
+        fymax = 0;
+        fymin = 0;
+        int j = 0;
+        for (int i = 0; i < k; i++)
+        {
+
+            R = sqrt(pow(PL1[i][1], 2) + pow(PL1[i][2], 2));
+            if (R <= O)
+            {
+                j = j + 1;
+                if (fxmax < PL1[i][1])
+                {
+                    fxmax = PL1[i][1];
+                }
+                if (fxmin > PL1[i][1])
+                {
+                    fxmin = PL1[i][1];
+                }
+                if (fymax < PL1[i][2])
+                {
+                    fymax = PL1[i][2];
+                }
+                if (fymin > PL1[i][2])
+                {
+                    fymin = PL1[i][2];
+                }
+
+            }
+        }
+
+        for (int i = 0; i < k; i++)
+        {
+            R = sqrt(pow(PL3[i][1], 2) + pow(PL3[i][2], 2));
+            if (R <= O)
+            {
+                j = j + 1;
+                if (fxmax < PL3[i][1])
+                {
+                    fxmax = PL3[i][1];
+                }
+                if (fxmin > PL3[i][1])
+                {
+                    fxmin = PL3[i][1];
+                }
+                if (fymax < PL3[i][2])
+                {
+                    fymax = PL3[i][2];
+                }
+                if (fymin > PL3[i][2])
+                {
+                    fymin = PL3[i][2];
+                }
+            }
+        }
+
+        for (int i = 0; i < 2 * k; i++)
+        {
+            R = sqrt(pow(PL4[i][1], 2) + pow(PL4[i][2], 2));
+            if (R <= O)
+            {
+
+                j = j + 1;
+                if (fxmax < PL4[i][1])
+                {
+                    fxmax = PL4[i][1];
+                }
+                if (fxmin > PL4[i][1])
+                {
+                    fxmin = PL4[i][1];
+                }
+                if (fymax < PL4[i][2])
+                {
+                    fymax = PL4[i][2];
+                }
+                if (fymin > PL4[i][2])
+                {
+                    fymin = PL4[i][2];
+                }
+
+            }
+
+        }
+
+        GrafOkr.open("GrafOkr");
+        GrafOkr << "#Lammps format" << endl;
+        GrafOkr << j << " atoms" << endl;
+        GrafOkr << endl;
+        GrafOkr << "2 atom types" << endl;
+        GrafOkr << fxmin << " " << fxmax << " " << "xlo " << "xhi" << endl;
+        GrafOkr << fymin << " " << fymax << " " << "ylo " << "yhi" << endl;
+        GrafOkr << fzmin << " " << fzmax << " " << "zlo " << "zhi" << endl;
+        GrafOkr << endl;
+        GrafOkr << "Atoms #atomic" << endl;
+        GrafOkr << endl;
+        int p = 1;
+        for (int i = 0; i < k; i++)
+        {
+            R = sqrt(pow(PL1[i][1], 2) + pow(PL1[i][2], 2));
+            if (R <= O)
+            {
+                GrafOkr << p << " ";
+                p = p + 1;
+                GrafOkr << PL1T[i] << " ";
+
+                for (int j = 1; j < 4; j++)
+                {
+                    GrafOkr << PL1[i][j] << " ";
+                }
+                GrafOkr << endl;
+            }
+        }
+
+        for (int i = 0; i < k; i++)
+        {
+            R = sqrt(pow(PL3[i][1], 2) + pow(PL3[i][2], 2));
+            if (R <= O)
+            {
+                GrafOkr << p << " ";
+                p = p + 1;
+                GrafOkr << PL3T[i] << " ";
+                for (int j = 1; j < 4; j++)
+                {
+                    GrafOkr << PL3[i][j] << " ";
+                }
+                GrafOkr << endl;
+            }
+        }
+
+        for (int i = 0; i < 2 * k; i++)
+        {
+            R = sqrt(pow(PL4[i][1], 2) + pow(PL4[i][2], 2));
+            if (R <= O)
+            {
+                if (PL4[i][3] != -909909)
+                {
+                    GrafOkr << p << " ";
+                    p = p + 1;
+                    GrafOkr << PL4T[i] << " ";
+                }
+
+                for (int j = 1; j < 4; j++)
+                {
+                    if (PL4[i][3] != -909909)
+                    {
+
+                        GrafOkr << PL4[i][j] << " ";
+                    }
+
+                }
+                if (PL4[i][3] != -909909)
+                {
+                    GrafOkr << endl;
+                }
+            }
+
+        }
+        GrafOkr.close();
+
+    }
 }
+
+
+
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
 // Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
